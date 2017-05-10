@@ -4,3 +4,7 @@ jdk:
 
 before_script:
     - cd CustomerOrderServicesProject
+
+after_script:
+    - cd ..
+    - find . -name *.*ar

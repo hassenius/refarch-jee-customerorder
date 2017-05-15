@@ -20,6 +20,7 @@ public class CustomerServicesApp extends Application {
 		classes.add(CustomerOrderResource.class);
 		classes.add(ProductResource.class);
 		
+        // well, this won't actually fix the problem
 		classes.add(org.codehaus.jackson.jaxrs.JacksonJsonProvider.class)
 		
 		classes.add(com.ibm.websphere.jaxrs.providers.json4j.JSON4JObjectProvider.class);

@@ -26,6 +26,7 @@ public class CustomerServicesApp extends Application {
 		classes.add(com.ibm.websphere.jaxrs.providers.json4j.JSON4JArrayProvider.class);
 		classes.add(com.ibm.websphere.jaxrs.providers.json4j.JSON4JJAXBProvider.class);
 
+        // Let's create another clashing comment... Fun heh?
 		return classes;
 
 	}

@@ -10,7 +10,7 @@ node {
     stage('Compile code') {
 
       withMaven(maven: 'maven') {
-        sh 'mvn clean package'
+        sh 'cd CustomerOrderServicesProject ; mvn clean package'
       }
     }
     

@@ -17,7 +17,7 @@ node {
       
     stage('Build image') {
 
-        sh 'sed -i "s/___TOBEREPLACED___/${params.DB2Password}/g" Common/server.env.remote'
+        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/server.env.remote"
         app = docker.build("websphere/customer-order-service")
     }
 

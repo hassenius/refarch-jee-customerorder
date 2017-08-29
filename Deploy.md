@@ -63,25 +63,104 @@ This image will be stored in the IBM Cloud Private image repository,
 
 1. Build the docker image
 
-    ``` $ docker build -t master.cfc:8500/websphere/customer-order-services:0.1 . ```
+    ``` $ docker build -t master.cfc:8500/websphere/customer-order-service:0.1 . ```
 
 1. Push the image to the ICp Image Repository
 
-    ``` $ docker push master.cfc:8500/websphere/customer-order-services:0.1 ```
+    ``` $ docker push master.cfc:8500/websphere/customer-order-service:0.1 ```
 
  
 # Deploy application
 
 ### From GUI
-From navigation menu, select Applications.
-Select Deploy Application.
-On the General tab, provide an application name.
-On the Container Settings tab, provide a container name, image name, and port.​​​​​​
-Application name: customerorderservices
-Container name: customerorderservices
-Image name: master.cfc:8500/websphere/customer-order-services:0.1
-Container port: 9080
-Select Deploy.
+
+####  Create ConfigMaps
+The environment specific runtime variables for the application will be held in ConfigMaps.
+This information will include connectivity details for the Order database, the Inventory database and the LDAP server.
+
+1. From the navigation menu, select Configs
+1. Click Create Configmap
+1. In the dialog box, provide the name ```orderdb```
+1. Toggle the ```JSON mode``` button to enter JSON mode
+1. in the ```data``` key enter the following map
+
+    ```
+    "DB2_HOST_ORDER": "cap-sg-prd-2.integration.ibmcloud.com",
+    "DB2_PORT_ORDER": "16516",
+    "DB2_DBNAME_ORDER": "ORDERDB",
+    "DB2_USER_ORDER": "db2inst1",
+    "DB2_PASSWORD_ORDER": "Purple0ne"
+    ```
+
+1. Click ```Create```
+
+1. Click Create Configmap
+1. In the dialog box, provide the name ```inventorydb```
+1. Toggle the ```JSON mode``` button to enter JSON mode
+1. in the ```data``` key enter the following map
+
+    ```
+    "DB2_HOST_INVENTORY": "cap-sg-prd-2.integration.ibmcloud.com",
+    "DB2_PORT_INVENTORY": "16516",
+    "DB2_DBNAME_INVENTORY": "INDB",
+    "DB2_USER_INVENTORY": "db2inst1",
+    "DB2_PASSWORD_INVENTORY": "Purple0ne"
+    ```
+
+1. Click ```Create```
+
+1. Click Create Configmap
+1. In the dialog box, provide the name ```ldap```
+1. Toggle the ```JSON mode``` button to enter JSON mode
+1. in the ```data``` key enter the following map
+
+    ```
+    "LDAP_HOST": "cap-sg-prd-4.integration.ibmcloud.com",
+    "LDAP_PORT": "17830",
+    "LDAP_BASE_DN": "",
+    "LDAP_BIND_DN": "uid=casebind,ou=caseinc,o=sample",
+    "LDAP_BIND_PASSWORD": "caseBindUser!",
+    "LDAP_REALM": "SampleLdapIDSRealm"
+    ```
+
+1. Click ```Create```
+
+
+#### Deploy application
+
+1. From navigation menu, select Applications.
+1. Select Deploy Application.
+1. On the General tab, provide an application name.
+1. On the Container Settings tab, provide a container name, image name, and port.​​​​​​
+    
+    * Application name: customerorderservices
+    * Container name: customerorderservices
+    * Image name: master.cfc:8500/websphere/customer-order-service:0.1
+    * Container port: 9080
+
+1. Toggle ```JSON mode```
+1. Under ```containers``` enter
+    ```
+    "envFrom": [
+        {
+            "configMapRef": {
+                "name": "orderdb"
+            }
+        },
+        {
+            "configMapRef": {
+                "name": "inventorydb"
+            }
+        },
+        {
+            "configMapRef": {
+                "name": "ldap"
+            }
+        }
+    ],
+    ```
+
+1.Select Deploy.
 
 right click the cog wheel for the application and select Expose
 Expose Method: ClusterIP
@@ -126,7 +205,7 @@ Target Port: 9080
             app: customerorderservices
         spec:
           containers:
-          - image: master.cfc:8500/websphere/customerorderservices:0.1
+          - image: master.cfc:8500/websphere/customer-order-service:0.1
             imagePullPolicy: Always
             name: customerorderservices
             ports:

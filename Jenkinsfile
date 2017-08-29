@@ -17,8 +17,8 @@ node {
       
     stage('Build image') {
 
-        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/Common/order-db.properties"
-        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/Common/inventory-db.properties"
+        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/order-db.properties"
+        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/inventory-db.properties"
         app = docker.build("websphere/customer-order-service")
     }
 

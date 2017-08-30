@@ -43,13 +43,14 @@ node {
     }
     
     stage('Deploy application') {
-      def rc = getKubernetesJson {
-        port = 9080
-        label = 'customerorderservices'
-        version = newVersion
-        imageName = "websphere/customer-order-service:${env.BUILD_NUMBER}"
-      }
-            kubernetesApply(file: rc, environment: 'customerorderservices', registry: 'master.cfc:8500')
+      sh "
+        #!/bin/bash
+        alias kubectl=kubectl-1.6.1
+        
+        kubectl get pods
+        
+      "
+
            
     }
 }

@@ -43,13 +43,13 @@ node {
     }
     
     stage('Deploy application') {
-      sh "
+      sh '''
         #!/bin/bash
         alias kubectl=kubectl-1.6.1
         
         kubectl get pods
         
-      "
+      '''
 
            
     }

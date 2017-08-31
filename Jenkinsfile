@@ -17,9 +17,7 @@ node {
       
     stage('Build image') {
 
-        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/order-db.properties"
-        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/inventory-db.properties"
-        app = docker.build("websphere/customer-order-service")
+        app = docker.build("${params.namespace}/customer-order-service")
     }
 
     stage('Test image') {
@@ -47,7 +45,12 @@ node {
         #!/bin/bash
         alias kubectl=kubectl-1.6.1
         
-        kubectl get pods
+        # We will need to handle the conditional creation of ConfigMaps
+        # Update the passwords
+        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/order-db.properties"
+        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/inventory-db.properties"
+        
+        kubectl apply -f deployment.yaml
         
       '''
 

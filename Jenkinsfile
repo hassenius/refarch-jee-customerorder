@@ -17,8 +17,7 @@ node {
       
     stage('Build image') {
 
-        sh "sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/server.env.remote"
-        app = docker.build("websphere/customer-order-service")
+        app = docker.build("${params.namespace}/customer-order-service")
     }
 
     stage('Test image') {
@@ -39,6 +38,41 @@ node {
             app.push("${env.BUILD_NUMBER}")
             app.push("latest")
         }
+    }
+    
+    stage('Deploy application') {
+      sh '''
+        #!/bin/bash
+        alias kubectl=kubectl-1.6.1
+        
+        # Create configmaps if they dont exist
+        
+        if  (kubectl get configmap orderdb &>/dev/null) ; then
+          echo "Already have configmap, will not replace"
+        else
+          sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/order-db.properties
+          kubectl create configmap orderdb --from-file=Common/order-db.properties
+        fi
+
+        if  (kubectl get configmap inventorydb &>/dev/null) ; then
+          echo "Already have configmap, will not replace"
+        else
+          sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/inventory-db.properties
+          kubectl create configmap inventorydb --from-file=Common/inventory-db.properties
+        fi
+
+        if  (kubectl get configmap ldap &>/dev/null) ; then
+          echo "Already have configmap, will not replace"
+        else
+          kubectl create configmap ldap --from-file=ldap.properties
+        fi
+
+        # Apply the deployment
+        kubectl apply -f Common/DevOps/deployment.yaml
+        
+      '''
+
+           
     }
 }
 

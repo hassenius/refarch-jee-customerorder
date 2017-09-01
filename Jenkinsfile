@@ -16,7 +16,7 @@ node {
     
       
     stage('Build image') {
-
+    
         app = docker.build("${params.namespace}/customer-order-services")
     }
 
@@ -50,12 +50,10 @@ node {
         do
           kubectl get configmap $map || kubectl create configmap $map --from-file=tutorial/tutorialConfigFiles/step5/${map}.properties
         done
-
+        
         # Apply the deployment
         kubectl apply -f Common/DevOps/deployment.yaml
-        
-      '''
-           
+                   
     }
 }
 

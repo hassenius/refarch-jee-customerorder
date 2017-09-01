@@ -53,7 +53,7 @@ node {
         
         # Apply the deployment
         kubectl apply -f Common/DevOps/deployment.yaml
-                   
+      '''
     }
 }
 

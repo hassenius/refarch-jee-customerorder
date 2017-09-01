@@ -17,7 +17,7 @@ node {
       
     stage('Build image') {
 
-        app = docker.build("${params.namespace}/customer-order-service")
+        app = docker.build("${params.namespace}/customer-order-services")
     }
 
     stage('Test image') {
@@ -46,32 +46,15 @@ node {
         alias kubectl=kubectl-1.6.1
         
         # Create configmaps if they dont exist
-        
-        if  (kubectl get configmap orderdb &>/dev/null) ; then
-          echo "Already have configmap, will not replace"
-        else
-          sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/order-db.properties
-          kubectl create configmap orderdb --from-file=Common/order-db.properties
-        fi
-
-        if  (kubectl get configmap inventorydb &>/dev/null) ; then
-          echo "Already have configmap, will not replace"
-        else
-          sed -i 's/___TOBEREPLACED___/${params.DB2Password}/g' Common/inventory-db.properties
-          kubectl create configmap inventorydb --from-file=Common/inventory-db.properties
-        fi
-
-        if  (kubectl get configmap ldap &>/dev/null) ; then
-          echo "Already have configmap, will not replace"
-        else
-          kubectl create configmap ldap --from-file=ldap.properties
-        fi
+        for map in ldap orderdb inventorydb 
+        do
+          kubectl get configmap $map || kubectl create configmap $map --from-file=tutorial/tutorialConfigFiles/step5/${map}.properties
+        done
 
         # Apply the deployment
         kubectl apply -f Common/DevOps/deployment.yaml
         
       '''
-
            
     }
 }

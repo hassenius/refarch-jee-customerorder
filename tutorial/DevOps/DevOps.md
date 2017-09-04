@@ -2,6 +2,11 @@
 In this exercise we will go through the steps of creating a pipeline in Jenkins running on ICp. 
 The pipeline will compile the code from source, build and push docker image and deploy the application on Kubernetes.
 
+Jenkins will be installed from the ICp Application Catalog, and only minimal configuration will be required to be able to build and deploy the CustomerOrderServices application.
+
+The pipeline steps will be provided to Jenkins from a Jenkinsfile in github each build, meaning that also the pipeline configuration is under version control.
+
+
 # Setup
 
 ### Install and access Jenkins
@@ -67,8 +72,8 @@ In this example, we will update a file straight from the github website. However
 1. Navigate to /CustomerOrderServicesWeb/WebContent/product and open the `product.html` file
 1. Click the pencil symbol in the file heading to edit the file
 1. Around line 17, locate the line `<div id="catHeader" class="catHeader">Movies</div>`
-    Update *Movies* to *Great movies* so the line sais
-    <div id="catHeader" class="catHeader">Great movies</div>  
+    Update *Movies* to *Great movies* so the line reads
+    `<div id="catHeader" class="catHeader">Great movies</div> `
 1. In the *Commit changes* dialog box below, create a description of your changes. For example `Make movies great again` and click, `Commit changes`
 
 Moving back to the Jenkins tab, you will notice that Jenkins will detect this change at the next github poll. A few minutes later your changes will be live.

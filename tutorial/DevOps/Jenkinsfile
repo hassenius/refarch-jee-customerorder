@@ -41,6 +41,9 @@ node {
     }
     
     stage('Deploy application') {
+        /* Update deployment to use latest image */
+      sh "sed -i 's/customer-order-services:liberty/customer-order-services:${env.BUILD_NUMBER}/g' tutorial/DevOps/deployment.yaml "
+
       sh '''
         #!/bin/bash
         alias kubectl=kubectl-1.6.1
@@ -51,9 +54,6 @@ node {
           kubectl get configmap $map || kubectl create configmap $map --from-file=tutorial/tutorialConfigFiles/step5/${map}.properties
         done
         
-        # Update deployment to use latest image
-        sed -i 's/customer-order-services:liberty/customer-order-services:${env.BUILD_NUMBER}/g' tutorial/DevOps/deployment.yaml
-
         # Apply the deployment
         kubectl apply -f tutorial/DevOps/deployment.yaml
       '''
